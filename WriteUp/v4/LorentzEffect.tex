@@ -1,0 +1,974 @@
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+
+\documentclass[twoside]{article}
+ 
+\usepackage{textcomp}
+
+
+\usepackage{lipsum} % Package to generate dummy text throughout this template
+
+\usepackage[sc]{mathpazo} % Use the Palatino font
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\linespread{1.05} % Line spacing - Palatino needs more space between lines
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+
+\usepackage{amsmath}
+
+\usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
+\usepackage{multicol} % Used for the two-column layout of the document
+\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
+\usepackage{booktabs} % Horizontal rules in tables
+\usepackage{float} % Required for tables and figures in the multi-column environment - they need to be placed in specific locations with the [H] (e.g. \begin{table}[H])
+\usepackage{hyperref} % For hyperlinks in the PDF
+
+\usepackage{lettrine} % The lettrine is the first enlarged letter at the beginning of the text
+\usepackage{paralist} % Used for the compactitem environment which makes bullet points with less space between them
+
+\usepackage{abstract} % Allows abstract customization
+\renewcommand{\abstractnamefont}{\normalfont\bfseries} % Set the "Abstract" text to bold
+\renewcommand{\abstracttextfont}{\normalfont\small\itshape} % Set the abstract itself to small italic text
+
+\usepackage{titlesec} % Allows customization of titles
+\renewcommand\thesection{\Roman{section}} % Roman numerals for the sections
+\renewcommand\thesubsection{\Roman{subsection}} % Roman numerals for subsections
+\titleformat{\section}[block]{\large\scshape\centering}{\thesection.}{1em}{} % Change the look of the section titles
+\titleformat{\subsection}[block]{\large}{\thesubsection.}{1em}{} % Change the look of the section titles
+
+\usepackage{fancyhdr} % Headers and footers
+\pagestyle{fancy} % All pages have headers and footers
+\fancyhead{} % Blank out the default header
+\fancyfoot{} % Blank out the default footer
+\fancyhead[C]{Lorentz Effect $\bullet$ February 2018 $\bullet$ Mu2e-doc-5829-v4 } % Custom header text
+\fancyfoot[RO,LE]{\thepage} % Custom footer text
+
+\usepackage[english]{babel}
+\usepackage{graphicx}
+
+
+%change the margins
+\addtolength{\oddsidemargin}{-.875in}
+\addtolength{\evensidemargin}{-.875in}
+\addtolength{\textwidth}{1.75in}
+
+
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\title{\vspace{-15mm}\fontsize{24pt}{10pt}\selectfont\textbf{The Lorentz Effect for Mu2e Tracking}} % Article title
+
+\author{
+\large
+%\textsc{Jason Bono}\thanks{Thanks to David Brown of Berkley Lab}\\[2mm] % Your name
+\textsc{Jason Bono}\\[2mm] % Your name
+\normalsize Fermilab \\ % Your institution
+\normalsize \href{mailto:jbono@fnal.gov}{jbono@fnal.gov} % Your email address
+\vspace{-5mm}
+}
+\date{}
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Insert title
+
+\thispagestyle{fancy} % All pages have headers and footers
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT
+%----------------------------------------------------------------------------------------
+
+\begin{abstract}
+
+\noindent The accurate reconstruction of a particle track using drift chambers requires knowledge of the paths taken by electrons within a gas under the influence of an electric and magnetic field. At present, the magnetic field, which as we will show increases the total drift time by up to 12\% for Mu2e, is not incorporated in the tracking algorithm. In this document, we obtain the classical equations of motion for the steady state in the macroscopic limit, introduce a method for the development of approximation schemes relevant to most straw tube trackers, and derive the three dimensional drift paths, thereby deriving correction factors to be applied to the simulation and reconstruction algorithms for Mu2e. 
+
+\end{abstract}
+
+%----------------------------------------------------------------------------------------
+%	ARTICLE CONTENTS
+%----------------------------------------------------------------------------------------
+
+\begin{multicols}{2} % Two-column layout throughout the main article text
+
+\section{Formalism}
+In this section, we treat with some generality a particle of charge $e$ and mass $m$ moving within a gas under the influence of an electric and magnetic field. %Although drift chambers typically have a strong electric field gradient, these assumptions are suitable in the steady state,  as is discussed at the end of this section.
+In the macroscopic limit, the particle feels a retarding force due to friction which is proportional to its velocity,  $-K\vec{u}$. The equation of motion is thus
+\begin{equation}
+\label{eq:motion}
+m\frac{d\vec{u}}{dt} = e\vec{E} + e[\vec{u} \times \vec{B}] - K\vec{u}
+\end{equation}
+which represents three linear inhomogeneous differential equations. We note that in the steady state, where we call $\vec{u}$ the drift velocity, the equation of motion reduces to
+\begin{equation}
+\label{eq:motion}
+e\vec{E}  =  K\vec{u} - e[\vec{u} \times \vec{B}]
+\end{equation}
+Hereinafter, we shall refer to the drift velocity in the absence of a magnetic field as the \emph{nominal drift velocity}, $v_d$, which can be written down as
+\begin{equation}
+\label{eq:nob}
+v_d \equiv \vec{u}(\vec{B} = 0) = \frac{e}{K} |\vec{E}| = \frac{e \tau}{m} |\vec{E}| = \mu |\vec{E}| 
+\end{equation}
+where we have invoked the definition the \emph{momentum relaxation time}, $\tau$,
+\begin{equation}
+\tau \equiv  \frac{m}{K} = \frac{m v_d}{e|\vec{E}|}
+\end{equation}
+and the \emph{mobility}, $\mu$,
+\begin{equation}
+\mu |\vec{E}| \equiv v_d
+\end{equation}
+
+
+
+Reintroducing the magnetic field and defining the components of the cyclotron resonance frequency 
+\begin{equation}
+\omega_i =  \frac{e B_i}{m}
+\end{equation}
+we write Equation~\ref{eq:motion} in matrix form
+\begin{equation}
+\label{eq:mat}
+\vec{\epsilon} = M\vec{u} 
+\end{equation}
+with
+\begin{equation}
+\vec{\epsilon} \equiv \frac{e}{m}\vec{E}
+\end{equation}
+and
+\begin{equation}
+ M \equiv 
+\begin{pmatrix} 
+1/\tau & -\omega_z  & \omega_y \\  
+\omega_z & 1/\tau & -\omega_x \\
+-\omega_y & \omega_x & 1/\tau
+\end{pmatrix} 
+\end{equation}
+We solve for $\vec{u}$ by inversion
+\begin{equation}
+\vec{u} = M^{-1}\vec{\epsilon}  
+\end{equation}
+and after some algebra, we arrive at
+\begin{equation}
+\label{eq:start}
+\vec{u} = \frac{\mu | \vec{E} |}{1 + \zeta^2}(\hat{E} + \zeta(\hat{E} \times \hat{B}) + \zeta^2(\hat{E} \cdot \hat{B})\hat{B} )
+\end{equation}
+where we have defined the dimensionless quantity,
+\begin{equation}
+\label{eq:zeta}
+\zeta \equiv \omega \tau = \frac{v_d |\vec{B}|}{ | \vec{E} |} = \mu |\vec{B}|  
+\end{equation}
+
+ Without loss of generality, we may rotate to a coordinate system where $\vec{E}$ points along $\hat{x}$ and $\vec{B}$ lies in the $x$-$y$ plane. The magnetic field components are given by
+\begin{equation}
+\vec{B} =  | \vec{B} | ( \hat{x} \cos \phi + \hat{y} \sin \phi)
+\end{equation}
+where $\phi$ is the angle between the electric and magnetic fields. The components of Equation~\ref{eq:start} may then be expressed as \newpage
+\begin{equation}
+\boxed{
+\label{eq:components}
+ \begin{cases}
+               u_x =  \mu |\vec{E}| \Big(\frac{1 + \zeta^2 \cos^2 \phi}{1 + \zeta^2}\Big) \\ 
+               u_y =  \mu |\vec{E}| \Big(\frac{\zeta^2 \cos \phi \sin \phi}{1 + \zeta^2}\Big) \\ 
+               u_z =  \mu |\vec{E}| \Big(\frac{\zeta \sin \phi}{1 + \zeta^2}\Big)
+            \end{cases} 
+            }
+\end{equation}
+%\begin{equation}
+%\boxed{
+%\label{eq:components}
+% \begin{cases}
+%               u_x =  \eta (1 + \zeta^2 \cos^2 \phi)\\
+%               u_y =  \eta (\zeta^2 \cos \phi \sin \phi) \\
+%               u_z =  \eta (\zeta \sin \phi)
+%            \end{cases} 
+%            }
+%\end{equation}
+%where we set $\eta \equiv  \mu |\vec{E}|/(1 + \zeta^2)$. 
+keeping in mind that if the charge changes sign, $e \to -e$, then
+\begin{equation}
+ \begin{cases}
+               u_x \to - u_x\\ 
+               u_y \to  - u_y\\ 
+               u_z \to  u_z
+            \end{cases} 
+\end{equation}
+which can be observed quickly by noting that $\mu$ and $\zeta$ carry the sign of $e$.
+
+While Equation~\ref{eq:components} encodes all aspects of the motion in question, some recapitulation will expose a few convenient relations.
+First, by adding the components of the drift velocity in quadrature, we obtain the drift speed
+\begin{equation}
+\label{eq:speed}
+|\vec{u}| = \mu |\vec{E}| \sqrt{ \frac{1 + \zeta^2 \cos^2 \phi }{1 + \zeta^2}}
+\end{equation}
+We note that the magnetic field introduces a scaling factor on the total drift speed that is just the square root of the scaling factor on the \emph{longitudinal} velocity, \emph{i.e.} the velocity parallel to $\vec{E}$.
+
+Additionally, it will prove helpful to define the angles at which the charge drifts with respect to the electric field for points in the parameter space of  $\zeta$,
+\begin{equation}
+\label{eq:phi}
+              \tan \Phi \equiv  \frac{u_y}{u_x} = \frac{\zeta^2 \cos \phi \sin \phi}{1 + \zeta^2 \cos^2 \phi}            
+\end{equation}
+and
+\begin{equation}
+                \tan \Psi \equiv  \frac{u_z}{u_x} = \frac{\zeta \sin \phi}{1 + \zeta^2 \cos^2 \phi}        
+\end{equation}
+The total \emph{transverse} motion, by which we refer to the motion orthogonal to $\vec{E}$, is found by adding the components in quadrature  
+\begin{equation}
+                \tan \Xi = \sqrt{ \tan^2 \Phi +  \tan^2 \Psi }     
+\end{equation}
+which may be written as
+\begin{equation}
+\label{eq:angle}
+\tan \Xi = \frac{\zeta \sin \phi}{1 + \zeta^2 \cos^2 \phi}\sqrt{1 + \zeta \cos \phi}   
+\end{equation}
+
+
+Finally, we remark on the two extreme situations: when the fields are parallel to one another, and when they are orthogonal. When $\vec{E}$ and $\vec{B}$ are parallel, \emph{i.e.} $\phi = 0$, we see by inspection of Equations~\ref{eq:speed} and \ref{eq:angle} that
+\begin{equation}
+    \vec{u}_\parallel = \mu |\vec{E}| \hat{x}
+\end{equation}
+which is just the nominal drift velocity. Similarly, when $\vec{E}$ and $\vec{B}$ are perpendicular, \emph{i.e.} $\phi = \pi/2$, we recover
+\begin{equation} 
+ \begin{cases}
+ \Phi_\perp = 0 \\  
+ \tan \Psi_\perp =  \zeta
+ \end{cases}
+\end{equation} 
+so the total transverse drift angle is given by
+\begin{equation} 
+\tan \Xi_\perp = \zeta
+\end{equation} 
+Additionally, the speed becomes
+\begin{equation} 
+    |\vec{u}_\perp| = \frac{\mu |\vec{E}|}{\sqrt{1+ \zeta^2}} 
+\end{equation}
+which, with the use of some trigonometric identities, can be written as
+\begin{equation} 
+|\vec{u}_\perp| = \mu |\vec{E}| \cos \Psi
+\end{equation} 
+By convoking the form of the speed, drift angles, and similar identities as used above, we get the velocity
+\begin{equation} 
+\label{eq:perp}
+    \vec{u}_\perp = \mu |\vec{E}| \cos^2 \Psi( \hat{x}  +  \zeta \hat{z}) 
+\end{equation} 
+which, as required, yields the nominal drift velocity when $B \to 0$.
+
+
+%While the equations of motion have been derived under the assumption of constant and uniform fields, they hold in scenarios with field variations provided the motion is in the steady state, that is  if the motion happens on a time scale much greater than $\tau$. Since $\tau$ can be thought of as the average time in between microscopic collisions, which for air at room temperature and at one atmosphere is around 0.2 of a nanosecond, the steady state assumption can be drawn upon when considering motion on time scales of microseconds for most gasses at comparable temperatures and pressures.
+
+
+
+
+
+
+%------------------------------------------------
+
+\section{Detector Parameters}
+
+
+The Mu2e tracker comprises over 20,000 sense wires with a diameter of 25~\textmu m held at a potential of 1400 V. The sense wires are kept within an Ar/CO2 (80-20) gas mixture at 1~atm and encapsulated within 5~mm diameter metalized Mylar straw tubes. The length of each sense wire runs transverse to the the detector solenoid axis, and thus transverse to the 1~Tesla magnetic field which points downstream\cite{tdr}.
+
+With the above information, we can compute the numerical values of some relevant parameters pertaining to the motion of a charge within a straw tube.  The electric field within a straw tube is that of a long cylindrical capacitor,
+\begin{equation}
+\label{eq:E}
+\vec{E} \approx \frac{ k \Delta V}{r \ln(b/a)} \hat{r} \approx \frac{264.2}{r} \hat{r}
+\end{equation}
+where $r$ is the distance to the sense wire, $a$ and $b$ are the wire and straw radii respectively, and the relative electric permittivity of the gas is $k \approx 1$. Note that throughout this document, that SI units are assumed unless otherwise indicated. 
+
+The drift velocity of Ar/CO2 has been measured at 1 atm for a variety of mixing ratios by Reference~\cite{zhao}. More recently, a simulation of the Ar/CO2 drift velocity has been conducted by Reference~\cite{assran}, the results of which are in good agreement with the previous measurements and are displayed  below. %in Figure~\ref{fig:gas}.
+\begin{figure}[H]
+\label{fig:gas}
+    \includegraphics[width=0.47\textwidth]{pics/gasdrift}
+    \caption{The simulated drift velocity of Ar/CO2 gas mixtures at various ratios. The data most relevant to the Mu2e tracker are plotted in dark green.}
+\end{figure}
+The distance between the drifting charge and the center of the sense wire has a range of $ 12.5~ \text{\textmu m} < r < 2.5~ \text{mm}$, so Equation~\ref{eq:E} tells indicates that electric field has a range of about,
+\begin{equation}
+ 1056~\frac{\text{V}}{\text{cm}}  < E <  211381~\frac{\text{V}}{\text{cm}} 
+\end{equation}
+The field strength beyond $E = 10000$ V/cm corresponds to distances of $r < 264$  \textmu m; beyond where the typical charge has drifted the vast majority of its path length. So, we can safely ignore the lack of data in this region and assume a nominal drift velocity, $v_d$, that is independent of field strength for short distances.  On the other hand, the strong $E$ dependence of $v_d$ between $1056~\text{V/cm} < E < 2000~\text{V/cm} $ has significant influence on drift time. This region corresponds to distances between $2.5$ mm $ > r > 1.3 $ mm which is nearly half the path length for most trajectories, assuming homogeneously distributed starting points. Moreover, the drift velocity in this region is lower, so it is a region not only with higher cross sectional area, but with a higher density of drifting charge as well.  While a piece-wise nominal drift velocity might be most appropriate for future calculations, for now we assume
+\begin{equation}
+v_d \approx 5  \text{ } \frac{\text{cm}}{\text{\textmu s}}
+\end{equation}
+holds independent of the local field strength. An important caveat is that numerical integration of the previous measurements yields a significantly higher average nominal drift velocity, namely  
+\begin{equation}
+ 5.9 \text{ } \frac{\text{cm}} {\text{\textmu s}} < v_d < 6.8  \text{ } \frac{\text{cm}} {\text{\textmu s}}
+ \end{equation}
+as can be seen from in Figure~\ref{fig:num}.
+%This value is in disagreement however with direct measurements conducted this year with a tracker prototype at Berkley which suggest a significantly slower drift. The value of 5 cm/\textmu s (50 \textmu m/ns) is quoted in the technical design report and, for now, represents a reasonable average.
+ An experimantal investigation will be made into the drift velocity in the near future, the results will be reported, and this document will be updated since magnitude of the Lorentz effect increases with the drift velocity.   
+\begin{figure}[H]
+	\includegraphics[width=0.47\textwidth]{pics/num}
+	\caption{Calculation of the average nominal drift velocity for Ar/CO2 80:20 as a fuction of starting distance from the sense wire in the Mu2e tracker for various wire voltages. This calculation is based on previous measurments made by Reference~\cite{zhao}.}
+	\label{fig:num}
+\end{figure}
+
+
+
+The values of $E$ and $v_d$ correspond to a gas mobility of
+\begin{equation}
+\mu \approx r (189.2~\frac{\text{m}}{\text{V$\cdot$s}}) 
+\end{equation}
+Note that the linear $r$ dependence is partially an artifact of taking $v_d$ as a constant of motion. Since $B \approx 1$ Tesla, we get from Equation~\ref{eq:zeta} that the dimensionless parameter
+\begin{equation}
+\label{eq:zr}
+\zeta \approx r (189.2) \equiv r C
+\end{equation}
+when $r$ is in units of meters. Incidentally, the range of the dimensionless parameter $\zeta$  is,
+\begin{equation}
+ 0 < \zeta < 0.473
+\end{equation}
+Finally, the relevant parameters are tabulated below.
+
+\begin{table}[H]
+%\caption{Parameters}
+\centering
+\begin{tabular}{llr}
+\toprule
+\multicolumn{2}{c}{List of Tracker Parameters} \\
+\cmidrule(r){1-2}
+Parameter & Form & Value   \\
+\midrule
+
+$a$ & - & 12.5~\text{\textmu m} \\
+$b$ & - & 2.5~\text{mm} \\
+$v_d$ & - & 5~cm/\textmu s \\
+$B$ & - & 1~T \\ 
+$V$ & - & 1400~\text{V} \\
+$E$ & $264.2/r$ & - \\ 
+$\omega$ & $Be/m$ & - \\
+$\tau$ & $m v_d/eE$ & - \\
+$\zeta$ & $\omega \tau = v_d B / E$ & - \\
+$C$ & - & 189.2~\text{m$^{-1}$} \\
+
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+
+
+
+
+
+%------------------------------------------------
+
+\section{Time-Distance Transformations}
+It is convenient to rotate the previously defined $x$-$y$-$z$ coordinate system as the particle drifts so that $\hat{x}$ always points in the direction of $\vec{E}$.  This is achieved most naturally by making use of a system of cylindrical-coordinates, $r$-$\phi$-$z$, with $z$ running along the sense wire's interior, which we call the \emph{wire-centered coordinate system}. For any given straw in the Mu2e tracker, the quantities $u_x$, $u_y$ and $u_z$ from Equation~\ref{eq:components} represent the velocity in the radial, azimuthal and axial directions, respectively, in the wire centered coordinate system.  Consequently, we will express the radial distance to the sense wire as
+\begin{equation} 
+ x \to r
+ \end{equation}
+ for the remaining calculations. We will also be transforming between azimuthal infinitesimals by
+ \begin{equation}
+ dy \to r d\phi 
+ \end{equation}
+ Note that the angle $\phi$ represents the polar angle of the particle with respect to $\vec{B}$, which is equivalent to the angle between $\vec{E}$ and $\vec{B}$. 
+
+
+
+
+ The time it takes an electron initially at $r = d$ and $\phi = \phi_0$ to get to the sense wire is given by what we call the $d$-to-$t$ function, which is computed by
+\begin{equation}
+\label{eq:exact}
+t = \int_{a}^{d} \frac{dr}{u_r}  = \int_{a}^{d} \frac{ dr (1 + \zeta^2)}{\mu |\vec{E}| (1 + \zeta^2 \cos^2 \phi)} 
+\end{equation}
+where $a$ is the wire radius. This is an exact expression provided the $r$ dependence of $\phi$ is considered. However, as we will show at the end of the next section, $\phi$ is approximately a constant of motion, so
+\begin{equation}
+\phi(r) \approx \phi_0
+\end{equation}
+Making the $r$ dependence explicit through the identity from Equation~\ref{eq:zr}, we write the total time as,
+\begin{equation}
+t = \frac{1}{v_d} \int_{a}^{d} \frac{ dr (1 + C^2 r^2)}{(1 + C^2 r^2 \cos^2 \phi_0)} 
+\end{equation}
+which is the sum of two standard integrals. We arrive at
+\begin{equation}
+t = \frac{(\cos^2 \phi_0 - 1) \arctan(r C \cos \phi_0 ) + r C \cos \phi_0 }{v_d C \cos^3 \phi_0} \bigg|^d_a
+\end{equation}
+invoking the approximation $a \approx 0$
+\begin{equation}
+\boxed{
+\label{eq:gen}
+t = \frac{(\cos^2 \phi_0 - 1) \arctan(d C \cos \phi_0 ) + d C \cos \phi_0 }{v_d C \cos^3 \phi_0} 
+}
+\end{equation}
+which we call the \emph{exact solution}. Incidentally, the $d$-to-$t$ function for the case of parallel fields is obtained by evaluating Equation~\ref{eq:gen} at $ \phi_0 = 0$, which yields,
+\begin{equation}
+t_{\parallel} = \frac{d}{v_d} 
+\end{equation}
+as required.
+
+
+
+
+
+While exact, Equation~\ref{eq:gen} is cumbersome to invert and its use in the reconstruction algorithm would ultimately be an inefficient use of computing resources. So, we choose to circumvent this issue by invoking an approximation; the strategy we take is to avoid the integration altogether by assuming a constant velocity, namely, the average. Computing the average velocity directly leads to expressions which are as problematic as those we set out avoid. However, we can take advantage of the fact that the average velocity is achieved at \emph{some} point along the particle's path. The problem is thus reduced to selecting a region sufficiently close to \emph{that} point in the path, or, equivalently, a sufficient estimate of $\lambda$ such that  
+\begin{equation}
+u_{\text{avg}}(d,\phi_0) = u(\frac{d}{\lambda},\phi_0)
+\end{equation}
+for some constant $\lambda \geq 1$.  In other words, the $d$-to-$t$ function can be expressed as,
+\begin{equation}
+t^\prime =  \frac{d}{v_d} \frac{ (1 + (\frac{C d}{\lambda})^2)}{(1 + (\frac{C d}{\lambda})^2 \cos^2 \phi_0)} \equiv \frac{d}{v_d} \Gamma
+\end{equation}
+where the constant of motion $\Gamma^{-1}$ can be thought of as a scaling factor on the nominal drift velocity. To arrive at a value for $\lambda$, we note that the form of $t$ and $t^\prime$ are identical in the case of perpendicular fields. We can immediately write down $t^{\prime}_\perp$ as,
+\begin{equation}
+t^{\prime}_\perp = \frac{d}{v_d}( 1 + \frac{C^2 d^2}{\lambda^2})
+\end{equation}
+
+while $t_\perp$ is obtained from the limit
+\begin{equation}
+t_{\perp} = \lim_{\phi_0\to \frac{\pi}{2}} \frac{(\cos^2 \phi_0 - 1) \arctan(d C \cos \phi_0 ) + d C \cos \phi_0 }{v_d C \cos^3 \phi_0}
+\end{equation}
+which converges to
+\begin{equation}
+t_{\perp} = \frac{d}{v_d}( 1 + \frac{C^2 d^2}{3})
+\end{equation}
+Equating $t_{\perp}$ and $t^\prime_{\perp}$ gives $\lambda = \sqrt{3}$ which we call, for reasons that will be clear later, the \emph{third approximation}. Explicitly, we have
+\begin{equation}
+\boxed{
+t^\prime = \frac{d}{v_d}\bigg(\frac{1 + (\frac{C d}{\sqrt{3}})^2}{1 + (\frac{C d  \cos \phi_0}{\sqrt{3}})^2}\bigg)
+}
+\end{equation}
+which, as can be seen from plots later in this document, is nearly identical to the exact solution for all values of $\phi_0$ for the range of $\zeta$ in the Mu2e tracker. 
+While not necessary for the problem at hand, the azimuthal dependence of $\lambda$ could be taken into account by setting $t^\prime = t$ for more than one value of $\phi_0$, 
+possibly even for a continuum of values, but no further elaboration will be made in this document.
+
+The more naive \emph{first} and \emph{second} approximations are found by setting $\lambda = 1$ and $\lambda = 2$. All three approximations are summarized below, 
+\begin{equation}
+ \begin{cases}
+               \bar{u}_r(d,\phi_0) = u_r(d,\phi_0) \text{  in the \emph{first approximation}}\\
+               \bar{u}_r(d,\phi_0) = u_r(\frac{d}{2},\phi_0) \text{  in the \emph{second approximation}} \\
+               \bar{u}_r(d,\phi_0) = u_r(\frac{d}{\sqrt{3}},\phi_0) \text{  in the \emph{third approximation}}
+            \end{cases} 
+\end{equation}
+which have trivial physical interpretations.
+
+
+Finally, to obtain the $t$-to-$d$ function corresponding to the third approximation, we invert the $d$-to-$t$ function
+ \begin{equation}
+d^\prime = \frac{t v_d}{ \Gamma}
+ \end{equation}
+and let $\Gamma(d) \to \Gamma(t v_d)$, which gives,
+ \begin{equation}
+ \boxed{
+ d^\prime = t v_d \bigg(\frac{1 + (\frac{C t v_d  \cos \phi_0}{\sqrt{3}})^2}{1 + (\frac{C t v_d}{\sqrt{3}})^2}\bigg)
+ }
+ \end{equation}
+
+
+
+
+
+
+%------------------------------------------------
+\section{Axial and Azimuthal Drift}
+We now turn our attention to the axial motion. The total drift in $z$ for an electron is computed exactly by
+\begin{equation}
+\Delta z = \int^d_0 \tan \Psi dr = \int^d_0  \frac{\zeta \sin \phi_0}{1 + \zeta^2 \cos^2 \phi_0} dr
+\end{equation}
+or,
+\begin{equation}
+\boxed{
+\Delta z = \frac{\tan(\phi_0) \ln(1 + d^2 C^2 \cos^2\phi_0 ) }{2 C \cos\phi_0}
+}
+\end{equation}
+As a sanity check we take the limit
+\begin{equation}
+\Delta z_\perp =  \lim_{\phi_0\to \pi/2} \frac{\tan\phi_0 \ln(1 + d^2 C^2 \cos^2\phi_0 ) }{2 C \cos\phi_0} = \frac{d^2 C}{2}
+\end{equation}
+which is required, since setting $\phi_0 = \pi/2$ \emph{before} integrating gives
+\begin{equation}
+\Delta z = \int^d_0 C r dr = \frac{d^2 C}{2}
+\end{equation}
+Furthermore, when the fields are parallel we get
+\begin{equation}
+\Delta z_\parallel = 0
+\end{equation}
+which is also required.
+
+
+
+Finally, we compute azimuthal motion, which can be expressed in two ways, each with distinct significance: the drift in $y$ and the drift in $\phi$.
+% We remind ourselves of our assumption that the azimuthal drift speed is small, and therefore the total azimuthal drift is small. Under this assumption we have considered only the $r$ dependence of velocity along the path, and have taken the starting angle, $\phi_0$, \emph{prima facie}. In the following calculations, we continue to consider the velocity as only a function of $r$ and of the starting angle $\phi_0$. After we establish the necessary expressions, we justify our assumption by showing there a small drift in $\phi$. At first glance, it may seem like we will have made a circular argument since we invoke a supposition in order to prove its own validity.  There is no circularity since a valid upper limit is used; we find the total azimuthal drift based on the maximum azimuthal velocity, so that the inclusion of $\phi$ dependence would have \emph{reduced} the total $\phi$ drift. 
+The total drift in $y$, which represents the the azimuthal component of path length, for the drift of an electron is given by,
+\begin{equation}
+\Delta y = -\int^d_0 \tan \Phi dr = -\int^d_0  \frac{\zeta^2  \cos \phi_0 \sin \phi_0 }{1 + \zeta^2 \cos^2 \phi_0} dr
+\end{equation}
+or
+\begin{equation}
+\boxed{
+\Delta y = \frac{ \sin\phi_0( \sec\phi_0 \arctan(\cos\phi_0 C d) - C d  ) }{ C \cos\phi_0}
+}
+\end{equation}
+We make note that
+\begin{equation}
+\lim_{\phi_0\to \pi/2}  \frac{ \sin\phi_0( \sec\phi_0 \arctan(\cos\phi_0 C d) - C d  ) }{ C \cos\phi_0} = 0
+\end{equation}
+and
+\begin{equation}
+\lim_{\phi_0\to 0}  \frac{ \sin\phi_0( \sec\phi_0 \arctan(\cos\phi_0 C d) - C d  ) }{ C \cos\phi_0} = 0
+\end{equation}
+Hence,
+\begin{equation}
+\Delta y_\perp = \Delta y_\parallel = 0
+\end{equation}
+as required.  Similarly, the total drift in $\phi$ for an electron is given by,
+\begin{equation}
+\Delta \phi = -\int^d_0 \frac{\tan\Phi}{r}dr = -\int^d_0  \frac{C^2 r  \cos \phi_0 \sin \phi_0 }{1 + C^2 r^2 \cos^2 \phi_0} dr
+\end{equation}
+or
+\begin{equation}
+\boxed{
+\label{eq:phidrift}
+\Delta \phi = \frac{\tan\phi_0}{2}(\ln(2) -  \ln(C^2 d^2 (1 + \cos2\phi_0 ) + 2))
+}
+\end{equation}
+Taking the limits as $\phi_0 \to 0$ and $\phi_0 \to \pi/2$ recovers once again
+\begin{equation}
+\Delta \phi_\perp = \Delta \phi_\parallel = 0
+\end{equation}
+
+
+
+
+
+What remains now is to justify the earlier invoked approximation that $\phi$ is a constant of motion. For small values of $\zeta$, we see from Equation~\ref{eq:phi} that $\Phi$ is maximal when $\phi \approx \pi/4$. We then get
+\begin{equation}
+\label{eq:phimax}
+              \tan \Phi_\text{max} \approx \frac{\zeta^2}{2 + \zeta^2}            
+\end{equation}
+So, an upper bound on the $\phi$ drift is then,
+\begin{equation}
+\label{eq:phimax}
+            | \Delta \phi_\text{max} | <  \int^d_0 \frac{C^2 r}{2 + C^2 r^2} dr  = \frac{\ln(C^2 r^2 + 2)}{2} \bigg|^d_0
+\end{equation}
+For Mu2e, we have $d_\text{max} = 2.5$ corresponding to $\zeta_\text{max} = 0.48$), plugging this in gives, 
+\begin{equation}
+              | \Delta \phi_\text{max} | <  0.054 \text{ rad}  \approx 3^\circ
+\end{equation}
+for the maximal drift along the entire trajectory of the particle, which is indeed sufficiently small to neglect. Equivalently, this result is found by evaluating  Equation~\ref{eq:phidrift}, or inspection of the plot of $\Delta \phi$ in the following section.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%------------------------------------------------
+\section{Plots}
+
+
+
+
+%Below, we have plotted the d-to-t functions for all mentioned approximation schemes along with the exact solution.
+%%%%%%
+\begin{figure}[H]
+\label{fig:d2t90}
+    \includegraphics[width=0.44\textwidth]{pics/d2t90}
+    \caption{Total drift time as a function of initial radial distance from the sense wire, $d$, and initial azimuthal angle $\phi_0 = 90$.}
+\end{figure}
+\begin{figure}[H]
+\label{fig:d2t60}
+    \includegraphics[width=0.44\textwidth]{pics/d2t60}
+    \caption{Total drift time as a function of  initial radial distance from the sense wire, $d$, and initial azimuthal angle $\phi_0 = 60$.}
+\end{figure}
+\begin{figure}[H]
+\label{fig:d2t45}
+    \includegraphics[width=0.44\textwidth]{pics/d2t45}
+    \caption{Total drift time as a function of  initial radial distance from the sense wire, $d$, and initial azimuthal angle $\phi_0 = 45$.}
+\end{figure}
+\begin{figure}[H]
+\label{fig:d2t30}
+    \includegraphics[width=0.44\textwidth]{pics/d2t30}
+    \caption{Total drift time as a function of  initial radial distance from the sense wire, $d$, and initial azimuthal angle $\phi_0 = 30$.}
+\end{figure}
+\begin{figure}[H]
+\label{fig:d2t15}
+    \includegraphics[width=0.44\textwidth]{pics/d2t15}
+    \caption{Total drift time as a function of  initial radial distance from the sense wire, $d$, and initial azimuthal angle $\phi_0 = 15$.}
+\end{figure}
+
+
+
+
+%%%%
+\begin{figure}[H]
+\label{fig:iso}
+    \includegraphics[width=0.44\textwidth]{pics/iso}
+    \caption{Initial radial distance from the sense wire as a function of initial azimuthal angle, $\phi_0$, for four isochrones, $t=$ 20, 30, 40 and 50 ns, from inner to outer. The radial axis is in units of mm.}
+\end{figure}
+
+
+%%%%
+\begin{figure}[H]
+\label{fig:t2d90}
+    \includegraphics[width=0.44\textwidth]{pics/t2d90}
+    \caption{Initial radial distance from the sense wire as a function of total drift time, $t$, for an initial azimuthal angle $\phi_0 = 90$.}
+\end{figure}
+\begin{figure}[H]
+\label{fig:t2d60}
+    \includegraphics[width=0.44\textwidth]{pics/t2d60}
+    \caption{Initial radial distance from the sense wire as a function of total drift time, $t$, for an initial azimuthal angle $\phi_0 = 60$.}
+\end{figure}
+\begin{figure}[H]
+\label{fig:t2d45}
+    \includegraphics[width=0.44\textwidth]{pics/t2d45}
+    \caption{Initial radial distance from the sense wire as a function of total drift time, $t$, for an initial azimuthal angle $\phi_0 = 45$.}
+\end{figure}
+\begin{figure}[H]
+\label{fig:t2d30}
+    \includegraphics[width=0.44\textwidth]{pics/t2d30}
+    \caption{Initial radial distance from the sense wire as a function of total drift time, $t$, for an initial azimuthal angle $\phi_0 = 30$.}
+\end{figure}
+\begin{figure}[H]
+\label{fig:t2d15}
+    \includegraphics[width=0.44\textwidth]{pics/t2d15}
+    \caption{Initial radial distance from the sense wire as a function of total drift time, $t$, for an initial azimuthal angle $\phi_0 = 15$.}
+\end{figure}
+
+
+%%%%
+\begin{figure}[H]
+\label{fig:z}
+    \includegraphics[width=0.44\textwidth]{pics/z}
+    \caption{Total axial drift as a function of initial radial distance from the sense wire, $d$, for a number of initial azimuthal angles.}
+\end{figure}
+\begin{figure}[H]
+\label{fig:y}
+    \includegraphics[width=0.44\textwidth]{pics/y}
+    \caption{Azimuthal component of path length for the drift as a function of initial radial distance from the sense wire, $d$, for a number of initial azimuthal angles.}
+\end{figure}
+\begin{figure}[H]
+\label{fig:phi}
+    \includegraphics[width=0.44\textwidth]{pics/phi}
+    \caption{Total azimuthal drift, $\Delta \phi$, as a function of initial radial distance from the sense wire, $d$, for a number of initial azimuthal angles.}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%----------------------------------------------------------------------------------------
+%	REFERENCE LIST
+%----------------------------------------------------------------------------------------
+
+\begin{thebibliography}{99} % Bibliography - this is intentionally simple in this template
+
+\bibitem{tdr}
+Mu2e TDR 
+
+\bibitem{assran}
+Assran \& Sharma, \ 2011, arXiv:1110.6761 
+
+\bibitem{zhao}
+T. Zhao et al, \ 1993, NIM A 340 485-490
+
+\end{thebibliography}
+
+%----------------------------------------------------------------------------------------
+
+\end{multicols}
+
+\end{document}
+
+
+
+
+
+
+%
+%
+%
+%\newpage
+%\section{old stuff}
+%We can put an upper bound on the error associated with the assumption of a constant $r$-component of velocity.  Consider the case of maximal deviation, \emph{i.e.} when the two fields are perpendicular. 
+%The exact d-to-t function for the special case of perpendicular fields is begotten through the limit,
+%\begin{equation}
+%t_{\perp} = \lim_{\cos\phi\to 0} \frac{(\cos^2 \phi - 1) \arctan(d C \cos \phi ) + d C \cos \phi }{v_d C \cos^3 \phi}
+%\end{equation}
+%which converges to,
+%\begin{equation}
+%t_{\perp} = \frac{d}{v_d}( 1 + \frac{C^2 d^2}{3})
+%\end{equation}
+%Meanwhile, the approximate solution, namely that with constant $u_x$, is found directly from Equation~\ref{eq:components},
+%\begin{equation}
+%t^\prime_{\perp} = \frac{d}{u_x} = \frac{d (1 + C^2 d^2)}{v_d}
+%\end{equation}
+%We can quantify the relative effect of integrating the reciprocal of velocity with respect to $r$ by taking the ratio,
+%\begin{equation}
+%\frac{t_\perp}{t^\prime_{\perp}}  = \frac{1 + \frac{C^2 d^2}{3}}{1 + C^2 d^2}
+%\end{equation}
+%which is over a 10\% effect at $\zeta=0.5$, as can be seen from Figure~\ref{fig:ratio}.
+%\begin{figure}[H]
+%\label{fig:ratio}
+%    \includegraphics[width=0.47\textwidth]{pics/ratio}
+%    \caption{Here we have a worst case scenario for  the ratio of computed times vs $\zeta$. In mu2e,  0<$\zeta$<0.5}
+%\end{figure}
+%We we can therefore take the non-integrated d-to-t functions to good approximation. The expression for the d-to-t function is,
+%\begin{equation}
+%t(d,\phi) = \frac{d}{u_x} = \frac{d}{v_d}\bigg(\frac{1 + C^2 d^2}{1 + C^2 d^2 \cos^2 \phi}\bigg)
+%\end{equation}
+%The ratio of time calculated with to without the maximal lorentz effect is,
+%\begin{equation}
+%R_{\text{calc}} = \frac{1 + C^2 d^2}{1 + C^2 d^2 \cos^2 \phi}
+%\end{equation}
+%which is plotted in Figure~\ref{fig:calc} for $\phi = 0$
+%\begin{figure}[H]
+%\label{fig:calc}
+%    \includegraphics[width=0.47\textwidth]{pics/calc}
+%    \caption{The ratio of computed times with and without the Lorentz effect as a function of $\zeta$. In mu2e,  0<$\zeta$<0.5}
+%\end{figure}
+%The true effect should be the same expression obtained from integration. This is plotted in figure Figure~\ref{fig:true} for $\phi = 0$
+%\begin{equation}
+%R_{\text{true}} = 1 + \frac{C^2 d^2 \cos^2 \phi}{3}
+%\end{equation}
+%\begin{figure}[H]
+%\label{fig:true}
+%    \includegraphics[width=0.47\textwidth]{pics/true}
+%    \caption{The ratio of computed times with and without the Lorentz effect as a function of $\zeta$. In mu2e,  0<$\zeta$<0.5}
+%\end{figure}
+%A reasonable middle ground is to compute the d-to-t function without integration, but using the time averaged value of $\zeta$ which is essentially the time averaged value of $r$ over the trajectory,
+%\begin{equation}
+%r_{\text{avg}} = \frac{\int r dt}{\int dt} = \frac{\int \frac{r dr}{u_r}}{\int \frac{dr}{u_r}}
+%\end{equation}
+%which involves the same nasty expressions we set out to avoid. We can approximate $r_{\text{avg}}$ by making the assumption that the velocity decreases linearly with $r$. Under this assumption we get,
+%\begin{equation}
+%r_{\text{avg}}  = \frac{d}{2}
+%\end{equation}
+%Substituting this into ??? we get
+%\begin{equation}
+%\boxed{
+%t(d,\phi) = \frac{d}{v_d}\bigg(\frac{1 + (\frac{C d}{2})^2}{1 + (\frac{C d  \cos \phi}{2})^2}\bigg)
+%}
+%\end{equation}
+%which is plotted in Figure~????. In order to get the t-to-d function we must invert the above expression. We rewrite d-to-t function as, 
+%\begin{equation}
+%t(d_0,\phi) = \frac{d_0}{v_d}f(d_0)
+%\end{equation}
+%We want to find the function $g(t)$ such that,
+%\begin{equation}
+%d(t_0,\phi) = t_0v_d g(t_0)
+%\end{equation}
+%Substituting $t_0  = \frac{d_0}{v_d}$ gives,
+%\begin{equation}
+%d(t_0,\phi) = t_0v_d g(\frac{d_0}{v_d})
+%\end{equation}
+%In Equation ?? and ??, $f$ and $g$ can be thought of as contraction factors on the velocity. 
+%\begin{equation}
+%u_x = \frac{v_d}{f(d_0)} =   v_d g(\frac{d_0}{v_d})
+%\end{equation}
+%hence,
+%\begin{equation}
+%g(\frac{d_0}{v_d}) = f(d_0)
+%\end{equation}
+%With this transformation and the form of $f$, we can immediately write down the t-to-d function,
+%\begin{equation}
+%\boxed{
+%d(t_0,\phi) = t_0 v_d \bigg(\frac{1 + (\frac{C t_0 v_d  \cos \phi}{ 2})^2}{1 + (\frac{C t_0 v_d}{2})^2}\bigg)
+%}
+%\end{equation}
+%which is shown in Figure~\ref{fig:t2d}
+%\begin{figure}[H]
+%\label{fig:t2d}
+%    \includegraphics[width=0.47\textwidth]{pics/t2d}
+%    \caption{max r and zeta}
+%\end{figure}
+%
+%\begin{figure}[H]
+%\label{fig:ratio}
+%    \includegraphics[width=0.47\textwidth]{pics/d2t}
+%    \caption{thing}
+%\end{figure}
+%
+%
+%
+%
+%
+%\newpage
+%\section{Extra Calculations}
+%Using 1mm as a typical hit distance from the wire, we calculate,
+%\begin{equation}
+%\zeta \approx 0.1943 \approx 0.2
+%\end{equation}
+%we then get,
+%\begin{equation}
+%              \tan \Phi \equiv  \frac{u_y}{u_x} = \frac{0.04 \cos \phi \sin \phi}{1 + 0.04 \cos^2 \phi}            
+%\end{equation}
+%which is maximized at $\pi/4$ with a value of about 0.02. This means the drift in the y direction is less than 2\% of the radial motion. Say we have a charge starting at 2.5 mm, by the time it has reached 0.5mm from the wire, it has moved 0.04mm in y, which is only a 4 degree shift in phi.
+%
+%
+%\newpage
+%
+%The exact solution for the change in $\phi$ throughout the particle's trajectory is obtained by solving,
+%\begin{equation}
+%\frac {d\phi}{dx} = \frac{u_y}{x u_x}  = \frac{\zeta^2 \cos \phi \sin \phi}{x(1 + \zeta^2 \cos^2 \phi)}     
+%\end{equation}
+%which is a first-order nonlinear ODE with a nasty solution, call it $\phi(x,\phi_0)$. Throwing out the third order in $x$ term give,
+%\begin{equation}
+%d\phi   = C^2  x \cos \phi \sin \phi dx    
+%\end{equation}
+%or,
+%\begin{equation}
+% \int_{\phi_i}^{\phi_f} \frac{d\phi}{\cos \phi \sin \phi}   =   \int_{d}^{0}C^2  x  dx    
+%\end{equation}
+%or,
+%\begin{equation}
+% \ln(\frac{\tan\phi_f}{\tan\phi_i})  =  \frac{-C^2 x^2}{2}
+%\end{equation}
+%or,
+%\begin{equation}
+% \tan\phi_f  = \tan\phi_i \text{e}^\frac{-C^2 x^2}{2}
+%\end{equation}
+% or,
+%\begin{equation}
+%\Delta \tan\phi =  \tan\phi_f -\tan\phi_i = \tan\phi_i (\text{e}^\frac{-C^2 x^2}{2} - 1)
+%\end{equation} 
+% or,
+%\begin{equation}
+% \phi_f  = \arctan(\tan\phi_i \text{e}^\frac{-C^2 x^2}{2})
+%\end{equation} 
+% or,
+%\begin{equation}
+%\Delta \phi = \phi_f - \phi_i  = \arctan(\tan\phi_i \text{e}^\frac{-C^2 x^2}{2}) - \phi_i
+%\end{equation}  
+%which has a magnitude that is maximized when the exponent is maximized.
+%so,
+%\begin{equation}
+% \frac{\partial \Delta \phi}{\partial \phi_i} = \frac{k \sec^2\phi_i}{k^2 \tan^2\phi + 1} - 1
+%\end{equation}  
+% for some constant $k$
+% man something is fucked up
+% 
+%
+% 
+% 
+% 
+% \newpage
+%
+%OTHER THINGS
+%
+%
+%\begin{equation}
+%t = \int_{a}^{d} \frac{dr}{u_r} 
+%\end{equation}
+%\begin{equation}
+%u_r = \sqrt{u^2_x + u^2_y} = \eta \sqrt{1 + 2\zeta^2 \cos^2 \phi + \zeta^4 \cos^2 \phi}
+%\end{equation}
+%\begin{equation}
+%t = \int_{a}^{d} \frac{dr}{\eta \sqrt{1 + 2\zeta^2 \cos^2 \phi + \zeta^4 \cos^2 \phi}} 
+%\end{equation}
+%\begin{equation}
+% \eta \equiv  \mu |\vec{E}|/(1 + \zeta^2)
+%\end{equation}
+%\begin{equation}
+%t = \frac{1}{v_d} \int_{a}^{d} \frac{(1 + \zeta^2) dr}{ \sqrt{1 + 2\zeta^2 \cos^2 \phi + \zeta^4 \cos^2 \phi}} 
+%\end{equation}
+%A very bad integral, but the particle WONT spiral! assuming the steady state, it will get locked after a quarter of a turn!!!!
+%
+%
+%
+%
+%
+%The d-to-t function is is then obtained by substituting the form of $\phi(x,\phi_0)$ into the integral,
+%\begin{equation}
+%t = \int_{a}^{d} \frac{ dx (1 + \zeta^2)}{\mu |\vec{E}| (1 + \zeta^2 \cos^2 \phi(x,\phi_0))} 
+%\end{equation}
+%
+%
+%
+%
+%
+%
+%\newpage
+%\section{The Great Failure}
+%Taking only the first two terms in the taylor expansion of $\arctan(d C \cos \phi )$ about $d=0$, we obtain,
+%\begin{equation}
+%t \approx \frac{d}{v_d}(\frac{1}{\cos\phi} + \frac{d^2 C^2}{3}(1 - \cos \phi))
+%\end{equation}
+%For now, we will approximate even further to obtain the simple expression
+%\begin{equation}
+%t \approx \frac{d}{v_d \cos\phi}
+%\end{equation}
+%which is easily invertible,
+%\begin{equation}
+%d \approx t v_d \cos\phi
+%\end{equation}
+%and  we want to find the function $g(t)$ such that,
+%
+%\
+%
+%\newpage
+%\section{More old}
+% naively, we would choose the velocity $\vec{u}(d)$, yielding
+%\begin{equation}
+%t(d,\phi) = \frac{d}{u_x (d,\phi)} = \frac{d}{v_d}\bigg(\frac{1 + C^2 d^2}{1 + C^2 d^2 \cos^2 \phi}\bigg)
+%\end{equation}
+%which we call the \emph{first approximation}. 
+%A better approximation can be made by assuming that the velocity decreases linearly with $r$. Under this assumption we get,
+%\begin{equation}
+%r_{\text{avg}}  = \frac{d}{2}
+%\end{equation}
+%which gives,
+%\begin{equation}
+%t(d,\phi) = \frac{d}{v_d}\bigg(\frac{1 + (\frac{C d}{2})^2}{1 + (\frac{C d  \cos \phi}{2})^2}\bigg)
+%\end{equation}
+%We call this the \emph{second approximation}. 
+%
+%
+%
+%
+
+
+
+
